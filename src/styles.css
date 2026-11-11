@@ -60,3 +60,5 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lime);outline-o
 .ad-wait strong{font-size:10px;font-weight:600;color:#d9ded6}
 .ad-wait p{margin:0;color:#929a8e;font-size:9px;line-height:1.5}
 @media(max-width:900px){.dialog-backdrop{padding:12px}}
+
+.notice-banner{margin:10px 26px 0;padding:10px 12px;border:1px solid #47553a;background:#20271b;color:#d6e6c1;border-radius:6px;display:flex;align-items:center;gap:9px;font-size:11px}.notice-banner span{flex:1}.notice-banner button{background:transparent;border:0;color:inherit;cursor:pointer}.rail-button:disabled{opacity:.55;cursor:not-allowed}.sort-button:disabled{opacity:.7;cursor:default}
