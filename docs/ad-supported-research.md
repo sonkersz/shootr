@@ -51,10 +51,18 @@ No provider credentials have been supplied. Do not ship live ad requests until t
 ### Providers and policy fit
 
 - **Playwire — first to qualify for desktop video.** Their publisher page explicitly accepts desktop-app inquiries and their rewarded-video docs list web, mobile and desktop app inventory. This is the best match found for ad video inside a native desktop workflow, subject to approval and commercial terms.
-- **Adviverse — technical fallback to evaluate, not approved.** Its current SDK docs explicitly list Tauri/Electron/WebView and offer a labeled native ad card. Its publisher docs state the default rev share is 80% (publisher receives 80% of the clearing price), with the rest retained by the network; withdrawals require tax paperwork and a $25 default minimum. This is a substantial share and requires sending ad impression traffic to a newer third-party network. Validate company, advertiser demand, desktop inventory acceptance, legal terms, privacy, and payout reliability before using it. Its documented desktop SDK does not establish a rewarded-video format.
+- **Adviverse — possible small-audience display candidate, not yet approved.** Its docs explicitly list Tauri/WebView and support a visible, labeled native ad card with a 60-second refresh option. A distinct creative may be rotated when the network has inventory, but repeats and no-fill remain possible. Its publisher docs state a default 80% share (publisher receives 80% of clearing price); withdrawals require tax paperwork and a $25 default minimum. Its desktop integration is display/native creative, not rewarded video. The GitHub SDK repo's package.json marks the package `UNLICENSED`; do not bundle/vendor that SDK without written rights. Before adding any provider code, confirm the company's publisher terms, desktop property approval, ad demand, payout, and privacy terms. A provider-neutral slot can be prepared now; a real token and approved placement are required to serve.
 - **Vungle — Windows-only fallback.** Current docs describe a rewarded/interstitial SDK for Win32, WinUI, WinForms and WPF via WebView2, not macOS or Tauri directly. It cannot cover ShootR's cross-platform desktop audience by itself.
 - **Google AdSense — do not use in the desktop app.** Google policy says publishers may not distribute Google ads through desktop software applications; showing an AdSense page inside software does not make it compliant. Google Ad Manager does offer rewarded ads on desktop web inventory, but that format is for a website/browser surface, not the Tauri native app. A separate website can use web inventory only if users visit that content as an ordinary web experience and it complies with publisher-content rules; do not load an ad-only page from the app to bypass the software restriction.
 - **Playwire revenue claims are not ShootR projections.** Marketing examples are not a forecast and are not guaranteed for a small/new photography app.
+
+### 0–100-user launch plan
+
+- Keep the app's sponsored area as one clearly labeled native display slot that only loads while local culling is genuinely running and the app window is foregrounded.
+- If an approved display provider is configured, rotate to another creative at the provider-approved refresh interval (candidate: 60 seconds). Track creative IDs shown in the current session and suppress a repeat when the provider/API allows it. If no distinct ad is available, keep the current one or show no-fill; never create fake ads or extend the cull to manufacture impressions.
+- Do not treat a native display card as a rewarded video. It cannot implement the user's original watch-to-support idea.
+- At very low volume, direct sponsorship is another option: ShootR sells and schedules placements itself and keeps more gross revenue, but the developer must find advertisers and the app needs an approved creative workflow. No advertisers are signed.
+- Adviverse's public SDK package is marked `UNLICENSED`, so the source package is not added. Evaluate it only after a written license/use right is confirmed.
 
 ### Product and revenue guardrails
 
@@ -78,3 +86,5 @@ No provider credentials have been supplied. Do not ship live ad requests until t
 - [Playwire qualification criteria](https://www.playwire.com/qualification-criteria) — app publishers are advised to apply at around 10,000 DAU for ROI.
 - [Playwire FAQ](https://www.playwire.com/faq) — separately states 1,000 DAU as the app minimum; ask which applies to a new photo utility.
 - [Adviverse desktop SDK](https://adviverse.com/guides/desktop-sdk) and [earnings and payouts](https://adviverse.com/guides/earnings-payouts) — Tauri-compatible webview SDK and default 80% publisher share; not independently validated.
+
+- [Adviverse desktop SDK repository](https://github.com/Adviverse/desktop-sdk) — current package metadata reports `UNLICENSED`; do not vendor or bundle without rights.
