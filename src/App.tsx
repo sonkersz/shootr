@@ -41,6 +41,7 @@ function App() {
   const [analysis, setAnalysis] = useState<{ done: number; total: number; stage: string } | null>(null);
   const [error, setError] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
 
   useEffect(() => {
     engine<EngineInfo>("app_info").then(setEngineInfo).catch(() => setEngineInfo(null));
@@ -141,6 +142,7 @@ function App() {
           </div>
         </header>
 
+        {signInOpen && <AccountDialog onClose={() => setSignInOpen(false)} />}
         {page === "review" ? (
           <>
             <div className="toolbar">
@@ -195,6 +197,7 @@ function App() {
                   </div>
                   <aside className="inspector">
                     <div className="inspector-heading"><div><span>FRAME DETAILS</span><h2>Assessment</h2></div><button aria-label="More frame actions"><MoreHorizontal size={18} /></button></div>
+                    {analysis && <div className="ad-wait"><span className="ad-label">SPONSORED</span><strong>Optional ad slot</strong><p>Desktop publisher setup is pending. Culling continues at full speed.</p></div>}
                     {selectedPhoto?.assessment ? <>
                       <div className="score-row"><div className="score">{selectedPhoto.assessment.score}<small>/100</small></div><div className={`verdict ${selectedPhoto.assessment.verdict}`}>{selectedPhoto.assessment.verdict}</div></div>
                       <div className="reason-list">{selectedPhoto.assessment.reasons.map(reason => <span key={reason}><Info size={13} />{reason.replaceAll(/([A-Z])/g, " $1").toLowerCase()}</span>)}</div>
@@ -213,7 +216,7 @@ function App() {
 
             <footer className="statusbar"><div><span className="local-dot" />Local processing <span className="status-sep">·</span>{engineInfo?.accelerator ?? "Engine starting"}</div><div className="ad-status"><span>AD SLOT</span> Desktop publisher setup required</div><div><Command size={12} /> Shortcuts <span className="status-sep">·</span> v0.1</div></footer>
           </>
-        ) : page === "profile" ? <AccountPage onSignIn={() => setAccountOpen(true)} photosProcessed={photos.length} picked={counts.selected} /> : <UserManagementPage />}
+        ) : page === "profile" ? <AccountPage onSignIn={() => setSignInOpen(true)} photosProcessed={photos.length} picked={counts.selected} /> : <UserManagementPage />}
       </section>
     </main>
   );
@@ -229,6 +232,10 @@ function AccountPage({ onSignIn, photosProcessed, picked }: { onSignIn: () => vo
     <div className="stat-grid"><div><span>Frames in current library</span><strong>{photosProcessed.toLocaleString()}</strong></div><div><span>Picks in current library</span><strong>{picked.toLocaleString()}</strong></div><div><span>Ads completed</span><strong>—</strong></div></div>
     <div className="account-note"><CircleHelp size={16} /><p>Cross-device account history requires an authenticated backend and a privacy policy. ShootR will only sync summary counts, never photo files or image embeddings.</p></div>
   </section>;
+}
+
+function AccountDialog({ onClose }: { onClose: () => void }) {
+  return <div className="dialog-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}><section className="account-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button className="dialog-close" onClick={onClose} aria-label="Close sign in"><X size={16} /></button><span className="eyebrow">SHOOTR ACCOUNT</span><h2 id="signin-title">Sign in</h2><p>Accounts are planned for profile sync and owner-managed support.</p><label>Email<input type="email" placeholder="you@example.com" disabled /></label><label>Password<input type="password" placeholder="Password" disabled /></label><button className="button button-primary" disabled><LogIn size={14} />Identity service not connected</button><span className="dialog-foot">Local photo review remains available without an account.</span></section></div>;
 }
 
 function UserManagementPage() {
