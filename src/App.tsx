@@ -26,6 +26,12 @@ type EngineInfo = { modelsReady: boolean; noAccount: boolean; platform: string; 
 type Page = "review" | "profile" | "users";
 type Filter = "all" | "selected" | "review" | "rejected";
 
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error) return String((error as { message: unknown }).message);
+  return String(error);
+}
+
 async function engine<T>(command: string, args: Record<string, unknown> = {}): Promise<T> {
   return invoke<T>("invoke_engine", { command, args });
 }
@@ -88,7 +94,7 @@ function App() {
         setAnalysis({ done: 0, total: data.photos.length, stage: "analyzing" });
       }
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "ShootR could not open that folder.");
+      setError(errorMessage(caught) || "ShootR could not open that folder.");
     } finally { setLoading(false); }
   }
 
@@ -100,7 +106,7 @@ function App() {
       setProjectData(updated);
       const index = visiblePhotos.findIndex(photo => photo.id === selectedPhoto.id);
       setSelectedId(visiblePhotos[Math.min(index + 1, visiblePhotos.length - 1)]?.id ?? null);
-    } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not save that rating."); }
+    } catch (caught) { setError(errorMessage(caught) || "Could not save that rating."); }
   }
 
   async function exportPicks() {
@@ -119,7 +125,7 @@ function App() {
       });
       setNotice(`Exported ${result.copied} picked frame(s); wrote ${result.xmpWritten} XMP sidecar(s).`);
       if (result.errors.length) setError(`${result.errors.length} file(s) could not be exported.`);
-    } catch (caught) { setError(caught instanceof Error ? caught.message : "ShootR could not export those picks."); }
+    } catch (caught) { setError(errorMessage(caught) || "ShootR could not export those picks."); }
   }
 
   function moveSelection(delta: number) {
@@ -170,7 +176,7 @@ function App() {
               <div className="toolbar-actions">
                 <label className="searchbox"><Search size={15} /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a frame" /><kbd>⌘ K</kbd></label>
                 <button className="button button-subtle" onClick={() => void openFolder()} disabled={loading}><FolderOpen size={15} />{loading ? "Opening…" : "Open folder"}</button>
-                {projectData && <button className="button button-primary" disabled={!engineInfo?.modelsReady || !!analysis} title={!engineInfo?.modelsReady ? "Local culling model files are not installed yet." : undefined} onClick={() => void engine("start_analysis", { projectId: projectData.project.id }).then(() => setAnalysis({ done: 0, total: photos.length, stage: "analyzing" })).catch(e => setError(String(e)))}><Sparkles size={15} /> Cull locally</button>}
+                {projectData && <button className="button button-primary" disabled={!engineInfo?.modelsReady || !!analysis} title={!engineInfo?.modelsReady ? "Local culling model files are not installed yet." : undefined} onClick={() => void engine("start_analysis", { projectId: projectData.project.id }).then(() => setAnalysis({ done: 0, total: photos.length, stage: "analyzing" })).catch(e => setError(errorMessage(e)))}><Sparkles size={15} /> Cull locally</button>}
               </div>
             </div>
 
