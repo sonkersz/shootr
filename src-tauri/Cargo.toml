@@ -1,0 +1,25 @@
+[package]
+name = "shootr"
+version = "0.1.0"
+description = "Local-first photo culling for photographers"
+authors = ["ShootR"]
+edition = "2021"
+rust-version = "1.92"
+
+[lib]
+name = "shootr_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+cull-engine = { git = "https://github.com/Synapsr/Pelli-Instant", rev = "f8e2a8f4a812355c5e153773458a2c05de0acfde" }
+serde_json = "1"
+log = "0.4"
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+percent-encoding = "2"
+whoami = "2"
+env_logger = "0.11"
