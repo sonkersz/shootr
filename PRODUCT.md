@@ -4,7 +4,7 @@
 
 ## Platform
 
-macOS and Windows desktop app built with Tauri 2.
+macOS and Windows desktop app built with Tauri 2. Account sign-in, profile statistics, and owner-managed user records are product requirements.
 
 ## Stack
 
@@ -29,7 +29,7 @@ Photographers work from folders of images after events or portrait sessions, oft
 ## Capabilities and Constraints
 
 - The user explicitly requested free AI culling and editing, with the option to watch ads while a local culling job runs.
-- The user selected a desktop architecture based on Pelli Instant, a dark editing workspace, and code-first implementation.
+- The user selected a desktop architecture based on Pelli Instant, a dark editing workspace, and code-first implementation. They subsequently confirmed sign-in, user accounts, profile statistics, and owner-facing user management.
 - Pelli Instant's MIT-licensed Rust engine supports local AI analysis, RAW previews, similarity groups, face/eye/focus/exposure checks, ratings and export. Pin and attribute reused code; review each model's license separately.
 - Build the engine with `PELLI_INSTANT_NO_ACCOUNT=1` so culling does not need a Pelli account or quota. Exclude Pelli gallery upload/account features from ShootR.
 - Keep source images unchanged; culling decisions and edits must be reversible and portable.
@@ -38,6 +38,7 @@ Photographers work from folders of images after events or portrait sessions, oft
 - Ads must be voluntary and clearly disclosed. Skipping or closing an ad must not block the normal photo workflow. A provider and publisher account are still unresolved; no inventory or earnings are promised.
 - Ad revenue would be paid to ShootR's publisher account, not the photographer. Do not describe ads as payment to users or claim that viewing a specific duration funds a specific amount of compute.
 - First build scope: Tauri app shell, folder import, local culling through Pelli's engine, manual review, ratings, and portable selection export. Editing means basic non-destructive adjustments only after culling is connected.
+- Accounts are part of the product: users need sign-in and a profile with their usage statistics; the owner needs user management. Authentication provider, user-data schema, deployment, privacy retention, and admin authorization are unresolved and must be configured before real accounts are enabled.
 - Unresolved: first supported OS packaging, first-run model download/distribution, ad provider/account and reward mechanic, and exact model weights and notices.
 
 ## Evidence on Hand
