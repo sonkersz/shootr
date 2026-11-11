@@ -40,6 +40,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<{ done: number; total: number; stage: string } | null>(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
 
@@ -102,6 +103,25 @@ function App() {
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not save that rating."); }
   }
 
+  async function exportPicks() {
+    if (!projectData) return;
+    setError(""); setNotice("");
+    try {
+      const destination = await engine<string | null>("pick_folder");
+      if (!destination) return;
+      const result = await engine<{ copied: number; xmpWritten: number; errors: { message: string }[] }>("export_project", {
+        projectId: projectData.project.id,
+        options: {
+          xmp: { enabled: true, rating: { selected: 5, toReview: 3, rejected: -1 }, label: { selected: "green", toReview: "yellow", rejected: "red" }, keepUserMarks: true },
+          copySelected: { enabled: true, destination, includeRaw: true, includeJpeg: true, keepStructure: true },
+          moveRejected: { enabled: false, folderName: "Rejected" }, fileList: true,
+        },
+      });
+      setNotice(`Exported ${result.copied} picked frame(s); wrote ${result.xmpWritten} XMP sidecar(s).`);
+      if (result.errors.length) setError(`${result.errors.length} file(s) could not be exported.`);
+    } catch (caught) { setError(caught instanceof Error ? caught.message : "ShootR could not export those picks."); }
+  }
+
   function moveSelection(delta: number) {
     const index = visiblePhotos.findIndex(photo => photo.id === selectedPhoto?.id);
     setSelectedId(visiblePhotos[(index + delta + visiblePhotos.length) % visiblePhotos.length]?.id ?? null);
@@ -125,7 +145,7 @@ function App() {
         <div className="brand"><span className="brand-mark"><Aperture size={18} /></span><span>shootr</span></div>
         <div className="rail-rule" />
         <button className={page === "review" ? "rail-button active" : "rail-button"} title="Review workspace" onClick={() => setPage("review")}><LayoutGrid size={18} /><span>Library</span></button>
-        <button className="rail-button" title="Preferences"><Settings2 size={18} /><span>Settings</span></button>
+        <button className="rail-button unavailable" title="Settings are not available yet" disabled><Settings2 size={18} /><span>Settings</span></button>
         <div className="rail-spacer" />
         <button className="rail-button" title="Account profile" onClick={() => setPage("profile")}><CircleUserRound size={18} /><span>Profile</span></button>
         <button className="rail-button" title="User management" onClick={() => setPage("users")}><UserRoundCog size={18} /><span>Users</span></button>
@@ -154,20 +174,21 @@ function App() {
               </div>
             </div>
 
+            {notice && <div role="status" className="notice-banner"><Check size={15} /><span>{notice}</span><button aria-label="Dismiss" onClick={() => setNotice("")}><X size={15} /></button></div>}
             {error && <div role="alert" className="error-banner"><ShieldAlert size={16} /><span>{error}</span><button aria-label="Dismiss" onClick={() => setError("")}><X size={15} /></button></div>}
             {analysis && <div className="analysis-strip"><div className="analysis-copy"><span className="pulse" /><strong>Analyzing on this device</strong><span>{analysis.done.toLocaleString()} / {analysis.total.toLocaleString()} frames</span></div><div className="progress"><span style={{ width: analysis.total ? `${Math.min(100, analysis.done / analysis.total * 100)}%` : "4%" }} /></div><span className="analysis-stage">{analysis.stage}</span></div>}
 
             <div className="summary-row">
               <div className="summary-label"><span className="live-square" />Cull overview</div>
               <div className="summary-stats"><span><b>{counts.selected}</b> picked</span><i /><span><b>{counts.toReview}</b> to review</span><i /><span><b>{counts.rejected}</b> rejected</span></div>
-              <button className="export-button" disabled={!projectData}><ArrowDownToLine size={14} /> Export picks</button>
+              <button className="export-button" disabled={!projectData} onClick={() => void exportPicks()}><ArrowDownToLine size={14} /> Export picks</button>
             </div>
 
             <div className="filterbar">
               <div className="filters">
                 {(["all", "selected", "review", "rejected"] as Filter[]).map(item => <button key={item} className={filter === item ? "filter active" : "filter"} onClick={() => setFilter(item)}>{item === "all" ? "All frames" : item === "selected" ? "Picked" : item === "review" ? "Review" : "Rejected"}<span>{item === "all" ? photos.length : item === "selected" ? counts.selected : item === "review" ? counts.toReview : counts.rejected}</span></button>)}
               </div>
-              <button className="sort-button"><ListFilter size={14} /> Sort: capture time <ChevronDown size={13} /></button>
+              <button className="sort-button" disabled title="Capture-time sorting is the current default"><ListFilter size={14} /> Sort: capture time <ChevronDown size={13} /></button>
             </div>
 
             <div className="content">
@@ -196,7 +217,7 @@ function App() {
                     <div className="keyboard-hints"><span><kbd>←</kbd><kbd>→</kbd> Navigate</span><span><kbd>P</kbd> Pick</span><span><kbd>X</kbd> Reject</span><span className="frame-position">{Math.max(visiblePhotos.indexOf(selectedPhoto!), 0) + 1} / {visiblePhotos.length}</span></div>
                   </div>
                   <aside className="inspector">
-                    <div className="inspector-heading"><div><span>FRAME DETAILS</span><h2>Assessment</h2></div><button aria-label="More frame actions"><MoreHorizontal size={18} /></button></div>
+                    <div className="inspector-heading"><div><span>FRAME DETAILS</span><h2>Assessment</h2></div><button aria-label="More frame actions" disabled title="More actions are coming later"><MoreHorizontal size={18} /></button></div>
                     {analysis && <div className="ad-wait"><span className="ad-label">SPONSORED</span><strong>Optional ad slot</strong><p>Desktop publisher setup is pending. Culling continues at full speed.</p></div>}
                     {selectedPhoto?.assessment ? <>
                       <div className="score-row"><div className="score">{selectedPhoto.assessment.score}<small>/100</small></div><div className={`verdict ${selectedPhoto.assessment.verdict}`}>{selectedPhoto.assessment.verdict}</div></div>
