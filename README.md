@@ -6,7 +6,7 @@ ShootR is a local-first desktop photo culling workspace built with React, Vite, 
 
 The repository contains the research and the first desktop workspace scaffold. The UI calls the pinned Pelli Rust engine for local folder scanning, culling, ratings, and previews. Culling uses Pelli's no-account build mode; Pelli account, quota, and gallery features are excluded.
 
-Sign-in, profile sync, owner user management, model distribution, live ads, and export UX are not production-ready. The account screens disclose that an identity backend is not configured. The ad slot stays inactive until a desktop-app publisher partner approves ShootR and supplies its integration details. The research names Playwire as the first provider to qualify; no earnings or ad availability are guaranteed.
+Sign-in, profile sync, owner user management, model distribution, and live ads are not production-ready. The account screens disclose that an identity backend is not configured. Pick export copies selected frames and writes sidecar ratings, but has not been exercised in a desktop build. The ad slot stays inactive until a desktop-app placement is approved and licensed provider details are configured. At 0–100 users, a rotating native display card is the realistic first option; rewarded video is a later possibility through a desktop-approved partner. No earnings, unique ad fill, or inventory are guaranteed.
 
 The first build does not include a second culling engine, cloud image API, or bundled model weights. Model weights need their own size and license review before distribution.
 
