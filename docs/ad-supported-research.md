@@ -29,3 +29,46 @@ During a culling job, show a compact, dismissible sponsored panel alongside real
 - [Google Ad Manager: Policies for ad units that offer rewards](https://support.google.com/admanager/answer/7496282?hl=en)
 - [Google Publisher Tag sample: display a rewarded ad](https://developers.google.com/publisher-tag/samples/display-rewarded-ad)
 - [Playwire: Rewarded video ad units](https://www.playwire.com/rewarded-video-ad-units)
+
+
+## Desktop app monetization update — 11 November 2026
+
+### Preferred route to qualify
+
+[Playwire](https://www.playwire.com/apply-desktop-app) publicly offers a desktop-app publisher application and describes rewarded video as available for desktop apps. It promotes multiple demand sources and direct sales, which could help maximize competition for ShootR inventory if the publisher application is accepted. It does not publish a guaranteed rate, fill level, or acceptance outcome; actual earnings depend on audience, geography, engagement, demand, viewability, invalid-traffic adjustments, and the commercial revenue share in the contract. Do not promise any per-user or per-image revenue.
+
+The desktop app can keep a stable provider interface for:
+- opt-in rewarded ad while a real local analysis job is running in the foreground;
+- ad load, visible, complete, close, and no-fill events;
+- consent signals and provider-required identifiers;
+- revenue/impression reporting through the provider dashboard;
+- a fallback state that leaves culling uninterrupted when unavailable.
+
+No provider credentials have been supplied. Do not ship live ad requests until the account is approved, contract and privacy terms are reviewed, platform support is confirmed for both macOS and Windows, and the provider's SDK has been tested in Tauri/WebView.
+
+### Providers and policy fit
+
+- **Playwire — first to qualify for desktop video.** Their publisher page explicitly accepts desktop-app inquiries and their rewarded-video docs list web, mobile and desktop app inventory. This is the best match found for ad video inside a native desktop workflow, subject to approval and commercial terms.
+- **Adviverse — technical fallback to evaluate.** Its current desktop SDK docs explicitly list Tauri/Electron/WebView and offer a lightweight labeled native ad card with a served impression. The surfaced documented format is native display-style creative rather than a full-screen rewarded-video network. Demand, payout, and publisher approval need independent validation before integration.
+- **Vungle — Windows-only fallback.** Current docs describe a rewarded/interstitial SDK for Win32, WinUI, WinForms and WPF via WebView2, not macOS or Tauri directly. It cannot cover ShootR's cross-platform desktop audience by itself.
+- **Google AdSense — do not use in the desktop app.** Google policy says publishers may not distribute Google ads through desktop software applications; showing an AdSense page inside software does not make it compliant. Google Ad Manager does offer rewarded ads on desktop web inventory, but that format is for a website/browser surface, not the Tauri native app. A separate website can use web inventory only if users visit that content as an ordinary web experience and it complies with publisher-content rules; do not load an ad-only page from the app to bypass the software restriction.
+- **Playwire revenue claims are not ShootR projections.** Marketing examples are not a forecast and are not guaranteed for a small/new photography app.
+
+### Product and revenue guardrails
+
+- Ads run alongside culling without slowing, pausing, or padding the actual local job. Never extend processing to create more ad time.
+- The ad is opt-in, clearly labeled, foreground-visible, closeable, and not a condition for using culling or export.
+- If rewarded, the benefit must be a disclosed, nontransferable in-app convenience approved by the chosen partner; do not promise cash or imply viewers are paid.
+- Do not auto-refresh or repeatedly replay ads unless the provider explicitly permits the format and frequency.
+- Show no ad in the background, over the photo review controls, or where it can cause accidental clicks.
+- Keep photo bytes and image-derived data out of the ad system. Keep account identity separate from ad identifiers unless users explicitly consent and the provider allows it.
+- Since culling runs locally, there is no cloud inference bill per image to offset. Build a real P&L from net ad revenue, install/model delivery, support and service costs.
+
+### Sources
+
+- [Google AdSense ad placement policy](https://support.google.com/adsense/answer/1346295?hl=en) — excludes ads distributed through desktop applications.
+- [Google Ad Manager rewarded ads for web](https://support.google.com/admanager/answer/9116812?hl=en) — rewarded ads for desktop/mobile/tablet web inventory.
+- [Playwire desktop app application](https://www.playwire.com/apply-desktop-app) — publisher application.
+- [Playwire rewarded video format](https://www.playwire.com/rewarded-video-ad-units) — desktop app inventory is listed.
+- [Adviverse desktop SDK](https://adviverse.com/guides/desktop-sdk) — explicitly documents Tauri/WebView integrations.
+- [Vungle Windows desktop SDK](https://support.vungle.com/hc/en-us/articles/45026606409371-Integrate-Vungle-SDK-for-Win32-WinUI-3-WinForms-or-WPF) — current supported Windows desktop frameworks.
